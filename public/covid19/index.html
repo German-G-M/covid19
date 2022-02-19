@@ -17,9 +17,8 @@
 <body>
 
     <!--navbar de bootstrap-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-
             <a class="navbar-brand" href="#">Covid-19</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,13 +29,13 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item" style="display:none">
+                    <li class="nav-item" style="display:none" id="situacion_chile">
                         <a class="nav-link" href="#">Situación Chile</a>
                     </li>
-                    <li class="nav-item" style="display:none">
+                    <li class="nav-item" style="display:none" id="cerrar_sesion">
                         <a class="nav-link" href="#">Cerrar Sesión</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="iniciar_sesion">
                         <a class="nav-link" href="#" data-toggle="modal" data-target="#modal-inicio-sesion">Iniciar
                             Sesión</a>
                     </li>
@@ -45,113 +44,124 @@
         </div>
     </nav>
 
-    <h1 class="text-center">HITO 1: SITUACIÓN MUNDIAL</h1>
-    <BR>
-    <!--MODAL PARA INICIAR SESIÓN-->
-    <div class="modal fade" id="modal-inicio-sesion" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-info font-weight-bold" id="exampleModalLabel">Iniciar Sesión</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!--aqui va el formulario para iniciar sesión-->
-                    <form>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" class="text-secondary font-weight-bold">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1"
-                                aria-describedby="emailHelp">
-                            <small id="emailHelp" class="form-text text-muted">Nunca compartiremos tu email con terceros.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1" class="text-secondary font-weight-bold">Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1">
-                        </div>
-                        <div class="text-center"> 
-                            <button type="submit" class="btn btn-outline-info font-weight-bold">INGRESAR</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
+    <section id="situacion-mundial">
+        <h1 class="text-center">HITO 1: SITUACIÓN MUNDIAL</h1>
+        <BR>
 
-    <!--para el grafico de barras con canvas-->
-    <section class="container">
-        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
-    </section>
-    <br>
-
-    <!--para el grafico de barras con canvas-->
-    <section class="container">
-        <canvas id="graficoChartjs"></canvas>
-    </section>
-
-
-    <!--para la tabla-->
-    <section class="container">
-        <table class="table table-striped" id="js-tabla-datos">
-            <thead class="thead-dark text-center">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Pais</th>
-                    <th scope="col">Confirmados</th>
-                    <th scope="col">Muertos</th>
-                    <th scope="col">Recuperados</th>
-                    <th scope="col">Activos</th>
-                    <th scope="col">opciones</th>
-                </tr>
-            </thead>
-            <tbody class="text-center">
-                <!--adicionamos los datos del covid desde java script en la tabla-->
-            </tbody>
-        </table>
-    </section>
-
-
-
-    <!-- Modal para canvas -->
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-
-                </div>
-                <div class="modal-body">
-                    <!--aqui viene el grafico de torta-->
-                    <div id="chartContainerModal" style="height: 370px; width: 100%;"></div>
-                </div>
-                <div class="modal-footer">
-
+        <!--MODAL PARA INICIAR SESIÓN-->
+        <div class="modal fade" id="modal-inicio-sesion" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-info font-weight-bold" id="exampleModalLabel">Iniciar Sesión</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!--aqui va el formulario para iniciar sesión-->
+                        <form id="js-formulario">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="text-secondary font-weight-bold">Correo
+                                    Electrónico</label>
+                                <input type="email" class="form-control" id="correo" aria-describedby="emailHelp">
+                                <small id="emailHelp" class="form-text text-muted">Nunca compartiremos tu email con
+                                    terceros.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1"
+                                    class="text-secondary font-weight-bold">Password</label>
+                                <input type="password" class="form-control" id="contraseña">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-outline-info font-weight-bold"
+                                    id="btn-ingresar">INGRESAR</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--modal para chart js-->
 
-    <div class="modal fade" id="modalChartJs" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+        <!--para el grafico de barras con canvas-->
+        <section class="container">
+            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        </section>
+        <br>
 
-                </div>
-                <div class="modal-body">
+        <!--para el grafico de barras con canvas-->
+        <section class="container">
+            <canvas id="graficoChartjs"></canvas>
+        </section>
 
-                    <canvas id="graficoTortaChartjs"></canvas>
-                </div>
-                <div class="modal-footer">
+
+        <!--para la tabla-->
+        <section class="container">
+            <table class="table table-striped" id="js-tabla-datos">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Pais</th>
+                        <th scope="col">Confirmados</th>
+                        <th scope="col">Muertos</th>
+                        <th scope="col">Recuperados</th>
+                        <th scope="col">Activos</th>
+                        <th scope="col">opciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <!--adicionamos los datos del covid desde java script en la tabla-->
+                </tbody>
+            </table>
+        </section>
+
+
+
+        <!-- Modal para canvas -->
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                    </div>
+                    <div class="modal-body">
+                        <!--aqui viene el grafico de torta-->
+                        <div id="chartContainerModal" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!--modal para chart js-->
+
+        <div class="modal fade" id="modalChartJs" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                    </div>
+                    <div class="modal-body">
+
+                        <canvas id="graficoTortaChartjs"></canvas>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="situacion-chile" style="display: none;" class="mt-5 container">
+        ...aqui va el gráfico de chile
+        <canvas id="grafico_linea"></canvas>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -167,6 +177,7 @@
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
     <script src="./assets/scripts.js"></script>
+    <script src="./assets/avance_diario.js"></script>
 
 </body>
 
