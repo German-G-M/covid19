@@ -5,14 +5,24 @@ $('#js-formulario').submit(async () => {
     console.log(correoUsuario)
     console.log(passwordUsuario)
     const JWT = await postData(correoUsuario, passwordUsuario)//par verificar usuario y contraseña
-    console.log(JWT)
-    const datospordia=await obtenerDatosPorDia(JWT,"confirmed")
-    const datosmuertos=await obtenerDatosPorDia(JWT,"deaths")
-    const datosrecuperados=await obtenerDatosPorDia(JWT,"recovered")
-    $('#modal-inicio-sesion').modal('hide')
-    graficoPais(datospordia,datosmuertos,datosrecuperados)
+    if (JWT) {
+        document.getElementById("datos-incorrectos").innerHTML="Espere un momento. Los datos se estan cargando....";
+        document.getElementById("datos-incorrectos").style.background ="#99e2b4"; 
+        document.getElementById("datos-incorrectos").style.color ="#2d6a4f"; 
+        console.log(JWT)
+        const datospordia = await obtenerDatosPorDia(JWT, "confirmed")
+        const datosmuertos = await obtenerDatosPorDia(JWT, "deaths")
+        const datosrecuperados = await obtenerDatosPorDia(JWT, "recovered")
+        $('#modal-inicio-sesion').modal('hide')
+        correo.value=""
+        contraseña.value=""
+        graficoPais(datospordia, datosmuertos, datosrecuperados)
 
-
+    } else{
+        document.getElementById("datos-incorrectos").innerHTML=`Datos incorrectos. Intente nuevamente`;
+        document.getElementById("datos-incorrectos").style.background ="#ffccd5";
+        document.getElementById("datos-incorrectos").style.color ="#bc3908";
+    }
 })
 
 const postData = async (correo, password) => {
@@ -21,7 +31,7 @@ const postData = async (correo, password) => {
             method: 'POST',
             body: JSON.stringify({ email: correo, password: password })
         })
-        if (respuesta.status!=422) {
+        if (respuesta.status != 422) {
             const { token } = await respuesta.json()
             localStorage.setItem('llave-token', token)//guardamos el local storage el token
             //console.log(token)
@@ -40,7 +50,7 @@ const postData = async (correo, password) => {
 
 }
 
-const obtenerDatosPorDia = async (JWT,tipo) => {
+const obtenerDatosPorDia = async (JWT, tipo) => {
     try {
         const respuesta = await fetch(`http://localhost:3000/api/${tipo}`, {
             method: 'GET',
@@ -56,16 +66,16 @@ const obtenerDatosPorDia = async (JWT,tipo) => {
     }
 }
 
-const graficoPais=(datoC,datoM,datoR)=>{
+const graficoPais = (datoC, datoM, datoR) => {
     console.log(datoC)//mostramos el dato
-    document.getElementById('situacion_chile').addEventListener('click',()=>{
+    document.getElementById('situacion_chile').addEventListener('click', () => {
         document.getElementById('situacion-mundial').style.display = 'none'
         document.getElementById('situacion-chile').style.display = 'block'
         console.log("prbando garfico de paises")
-        fechas=[]
-        totalC=[]
-        totalM=[]
-        totalR=[]
+        fechas = []
+        totalC = []
+        totalM = []
+        totalR = []
         //console.log(dato)//mostramos el dato
         datoC.forEach(element => {
             fechas.push(element.date)
@@ -81,49 +91,49 @@ const graficoPais=(datoC,datoM,datoR)=>{
         });
 
         const ctx = document.getElementById('grafico_linea').getContext('2d');
-    if(myChart1){
-        myChart1.destroy()
-    }
-    myChart1 = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: fechas,
-            datasets: [{
-              label:'Confirmados' ,//array con fechas
-              data: totalC, //array
-              fill: false,
-              borderColor: 'rgb(75, 192, 192)',
-              tension: 0.1
-            },{
-                label:'Muertos' ,//array con fechas
-              data: totalM, //array
-              fill: false,
-              borderColor: 'rgb(255, 99, 132)',
-              tension: 0.1
-            },{
-                label:'Recuperados' ,//array con fechas
-              data: totalR, //array
-              fill: false,
-              borderColor: 'rgb(255, 206, 86)',
-              tension: 0.1
-            }]
-          },
-        options: {
-            plugins:{
-                title:{
-                    display:true,
-                    text: "CHILE"
+        if (myChart1) {
+            myChart1.destroy()
+        }
+        myChart1 = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Confirmados',//array con fechas
+                    data: totalC, //array
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }, {
+                    label: 'Muertos',//array con fechas
+                    data: totalM, //array
+                    fill: false,
+                    borderColor: 'rgb(255, 99, 132)',
+                    tension: 0.1
+                }, {
+                    label: 'Recuperados',//array con fechas
+                    data: totalR, //array
+                    fill: false,
+                    borderColor: 'rgb(255, 206, 86)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "CHILE"
+                    }
                 }
             }
-        } 
-    })
+        })
 
     })
 
 }
 
 
-const togleNavbarGraficos=()=>{
+const togleNavbarGraficos = () => {
     $('#situacion_chile').toggle();
     $('#iniciar_sesion').toggle();
     $('#cerrar_sesion').toggle();
@@ -133,8 +143,11 @@ const togleNavbarGraficos=()=>{
 
 $("#cerrar_sesion").on('click', (e) => {//botón cerrar sesión (volvemos todo a su estado inicial)
     e.preventDefault()
+    document.getElementById("datos-incorrectos").innerHTML="";
+    document.getElementById("datos-incorrectos").style.background ="none"; 
     localStorage.clear()
     togleNavbarGraficos()
+    
 })
 
 
